@@ -7,75 +7,84 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-void print();
 
-// main entry point of the program
+// calls to functions in program in order to keep main at TOF 
+void print_array();
+void swap();
+void shuffle();
+
+
+// populate a global array that simulate the cards needed for a game of "21"
+int deck[] = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11, 
+			   2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11, 
+			   2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11, 
+			   2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 11 };
+
+// get the number of elemtents in our global array by dividing the total size of array in bytes by a single element of the array in bytes
+int deck_length = sizeof(deck) / sizeof(deck[0]);
+
+
+// funct: Main entry point of the program
+// param: None
 int main()
 {
-	print();
+	print_array();
+
+	shuffle(deck, deck_length);
+
+	print_array();
 
 	return 0;
 }
 
-// user-defined data type to represent a "Card".
-struct Card
+
+// funct: Print the elements of an integer array to the console
+// param: None
+void print_array()
 {
-	// members
-	char Suit;
-	char Rank;
-};
+	// loop through the length of the array
+	for (int i = 0; i < deck_length; i++)
+	{
+		// print each element of the array
+		printf("%d ", deck[i]);
+	}
+	printf("\n");
+}
 
-void print()
+
+// funct: Swap two integers anywhere in memory
+// param: int *first_int	pointer to first integer
+// param: int *second_int 	pointer to second integer
+void swap(int *first_int, int *second_int)
 {
-	struct Card deck[52];
+	int temp;
 
-	for (int i = 0; i < 52; i++)
-	{
-		deck[i].Rank = i % 13 + 1;
+	temp        = *first_int;
+    *first_int  = *second_int;
+    *second_int = temp;
+}
 
-		if (deck[i].Rank == 1)
-		{
-			deck[i].Rank = 'A';
-		}
-		 else if(deck[i].Rank >= 2 && deck[i].Rank <11)
-        {
-            deck[i].Rank = deck[i].Rank + '0'; // Convert numeric ranks to characters
-        }
-		else if (deck[i].Rank == 11)
-		{
-			deck[i].Rank = 'J';
-		}
-		else if (deck[i].Rank == 12)
-		{
-			deck[i].Rank = 'Q';
-		}
-		else if (deck[i].Rank == 13)
-		{
-			deck[i].Rank = 'K';
-		}
 
-		if (i < 13)
-		{
-			deck[i].Suit = 'S';
-		}
-		else if (i < 26)
-		{
-			deck[i].Suit = 'H';
-		}
-		else if (i < 39)
-		{
-			deck[i].Suit = 'C';
-		}
-		else
-		{
-			deck[i].Suit = 'D';
-		}
-	}
+// funct: Generate random permutations of an integer array
+// param: int array[]	integer array
+// param: int n			integer size of array
+void shuffle(int array[], int n)
+{
+	// Use a different seed value so that we don't get same
+    // result each time we run this program
+	srand(time(NULL));
 
-	// print the deck
-	for (int i = 0; i < 52; i++)
-	{
-		printf("Card Suit: %c Card Rank: %c\n", deck[i].Suit, deck[i].Rank);
-	}
+	// Start from the last element and swap one by one. We don't
+    // need to run for the first element that's why i > 0
+	for (int i = n-1; i > 0; i--)
+    {
+        // Pick a random index from 0 to i
+        int j = rand() % (i+1);
+ 
+        // Swap arr[i] with the element at random index
+        swap(&array[i], &array[j]);
+    }
 }
